@@ -77,41 +77,41 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
 
 
-//        String email = _emailText.getText().toString();
-//        String password = _passwordText.getText().toString();
+        String email = _emailText.getText().toString();
+        String password = _passwordText.getText().toString();
 
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl("https://databaserest.herokuapp.com/")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        final Accountservice service = retrofit.create(Accountservice.class);
-//
-//        Call<List<Account>> createCall = service.all();
-//        createCall.enqueue(new Callback<List<Account>>() {
-//            @Override
-//            public void onResponse(Call<List<Account>> _, Response<List<Account>> response) {
-//                for (Account b : response.body()) {
-//                    String mail = _emailText.getText().toString();
-//                    String password = _emailText.getText().toString();
-//
-//
-//                    if(b.email != mail && b.password != password)
-//                        onLoginFailed();
-//                    else
-//                        onLoginSuccess();
-//
-//
-//
-//
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Account>> _, Throwable t) {
-//                t.printStackTrace();
-//            }
-//        });
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://databaserest.herokuapp.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final Accountservice service = retrofit.create(Accountservice.class);
+
+        Call<List<Account>> createCall = service.all();
+        createCall.enqueue(new Callback<List<Account>>() {
+            @Override
+            public void onResponse(Call<List<Account>> _, Response<List<Account>> response) {
+                for (Account b : response.body()) {
+                    String mail = _emailText.getText().toString();
+                    String password = _emailText.getText().toString();
+
+
+                    if(b.email != mail && b.password != password)
+                        onLoginFailed();
+                    else
+                        onLoginSuccess();
+
+
+
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Account>> _, Throwable t) {
+                t.printStackTrace();
+            }
+        });
 
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
