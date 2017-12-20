@@ -22,8 +22,6 @@ public class Account {
         this.name= name;
     }
 
-    public Account(String email, String password) {
-        this.email= email;
-        this.password = password;
-    }
+
+
 }

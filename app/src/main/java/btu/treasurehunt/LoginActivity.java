@@ -16,6 +16,8 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -27,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.input_password) EditText _passwordText;
     @Bind(R.id.btn_login) Button _loginButton;
     @Bind(R.id.link_signup) TextView _signupLink;
+
 
     
     @Override
@@ -57,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login() {
+
         Log.d(TAG, "Login");
 
         if (!validate()) {
@@ -72,18 +76,46 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://databaserest.herokuapp.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        final Accountservice service = retrofit.create(Accountservice.class);
-
-        Account account = new Account(_emailText.getText().toString(),_passwordText.getText().toString());
-        Call<List<Account>> createCall = service.all();
 
 //        String email = _emailText.getText().toString();
 //        String password = _passwordText.getText().toString();
+
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("https://databaserest.herokuapp.com/")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        final Accountservice service = retrofit.create(Accountservice.class);
+//
+//        Call<List<Account>> createCall = service.all();
+//        createCall.enqueue(new Callback<List<Account>>() {
+//            @Override
+//            public void onResponse(Call<List<Account>> _, Response<List<Account>> response) {
+//                for (Account b : response.body()) {
+//                    String mail = _emailText.getText().toString();
+//                    String password = _emailText.getText().toString();
+//
+//
+//                    if(b.email != mail && b.password != password)
+//                        onLoginFailed();
+//                    else
+//                        onLoginSuccess();
+//
+//
+//
+//
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Account>> _, Throwable t) {
+//                t.printStackTrace();
+//            }
+//        });
+
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+
 
         // TODO: Implement your own authentication logic here.
 
@@ -133,6 +165,7 @@ public class LoginActivity extends AppCompatActivity {
 
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
+
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("enter a valid email address");
