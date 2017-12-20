@@ -78,7 +78,7 @@ public class SignupActivity extends AppCompatActivity {
                 .build();
         final Accountservice service = retrofit.create(Accountservice.class);
 
-        Account account = new Account(_emailText.getText().toString(),_passwordText.getText().toString(),_nameText.getText().toString(),_reEnterPasswordText.getText().toString());
+        Account account = new Account(_emailText.getText().toString(),_passwordText.getText().toString(),_nameText.getText().toString());
 //
 
         Call<Account> createCall = service.create(account);
@@ -87,7 +87,6 @@ public class SignupActivity extends AppCompatActivity {
         createCall.enqueue(new Callback<Account>() {
             @Override
             public void onResponse(Call<Account> _, Response<Account> response) {
-
             }
 
 
@@ -111,7 +110,7 @@ public class SignupActivity extends AppCompatActivity {
                         // On complete call either onSignupSuccess or onSignupFailed
                         // depending on success
                         onSignupSuccess();
-                        // onSignupFailed();
+                        //onSignupFailed();
                         progressDialog.dismiss();
                     }
                 }, 3000);
@@ -120,6 +119,7 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
+        startActivity(new Intent(SignupActivity.this, MainActivity.class));
         setResult(RESULT_OK, null);
         finish();
     }
@@ -164,7 +164,6 @@ public class SignupActivity extends AppCompatActivity {
         } else {
             _reEnterPasswordText.setError(null);
         }
-
         return valid;
     }
 }
