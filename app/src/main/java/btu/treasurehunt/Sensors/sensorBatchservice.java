@@ -10,14 +10,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface sensorBatchservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    @GET("sensorBatch") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
     Call<List<Account>> all();
 
-    @GET("accounts/{isbn}")
+    @GET("sensorBatch/{isbn}")
     Call<Account> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("sensorBatch/new")
+    Call<sensorBatch> create(@Body sensorBatch sensorBatch);
 
 
 

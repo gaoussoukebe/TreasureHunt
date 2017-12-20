@@ -10,14 +10,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Thermometerservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("Thermometer") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<Thermometer>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("Thermometer/{isbn}")
+    Call<Thermometer> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("Thermometer/new")
+    Call<Thermometer> create(@Body Thermometer thermometer);
 
 
 

@@ -10,14 +10,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Gravityservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("Gravity") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<Gravity>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("Gravity/{isbn}")
+    Call<Gravity> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("Gravity/new")
+    Call<Gravity> create(@Body Gravity gravity);
 
 
 

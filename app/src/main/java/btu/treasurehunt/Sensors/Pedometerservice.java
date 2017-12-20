@@ -10,14 +10,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Pedometerservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("Pedometer") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<Pedometer>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("Pedometer/{isbn}")
+    Call<Pedometer> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("Pedometer/new")
+    Call<Pedometer> create(@Body Pedometer pedometer);
 
 
 

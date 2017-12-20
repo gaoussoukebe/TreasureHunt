@@ -5,7 +5,11 @@ package btu.treasurehunt;
  */
 
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Set;
+
+import btu.treasurehunt.Sensors.sensorBatch;
 
 /**
  * Created by abdirahmanahmed on 12/1/17.
@@ -16,17 +20,18 @@ import java.util.Set;
 public class Cells {
 
 
-    private long id;
-    private long numlayers;
+    @SerializedName("id")
+    int id;
 
-    protected Cells() {}
-    public Cells(Long numlayers) {
-        this.numlayers =  numlayers ;
+    @SerializedName("numlayers")
+    int numlayers;
+
+
+    private sensorBatch sensorbatch;
+
+
+    public Cells(int numlayers) {
+        this.numlayers = numlayers;
+
     }
-    private Set<UsermapCells> users;
-    private SpecialObjects specialObjects;
-
-
-
-
 }

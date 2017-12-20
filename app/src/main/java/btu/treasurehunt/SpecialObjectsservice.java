@@ -9,14 +9,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface SpecialObjectsservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("SpecialObjects") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<SpecialObjects>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("SpecialObjects/{isbn}")
+    Call<SpecialObjects> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("SpecialObjects/new")
+    Call<SpecialObjects> create(@Body SpecialObjects specialObjects);
 
 
 

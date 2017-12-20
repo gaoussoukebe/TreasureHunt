@@ -10,14 +10,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Proximityservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("Proximity") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<Proximity>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("Proximity/{isbn}")
+    Call<Proximity> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("Proximity/new")
+    Call<Proximity> create(@Body Proximity proximity);
 
 
 

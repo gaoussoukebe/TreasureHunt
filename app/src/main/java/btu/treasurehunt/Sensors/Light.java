@@ -1,6 +1,8 @@
 package btu.treasurehunt.Sensors;
 
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by abdirahmanahmed on 12/1/17.
  */
@@ -9,14 +11,22 @@ package btu.treasurehunt.Sensors;
 
 public class Light {
 
+    @SerializedName("id")
+    int id;
 
-    private long id;
+    @SerializedName("value")
+    String value;
 
-    private String value;
+    @SerializedName("type")
+    String type;
 
-    private String type;
+    private sensorBatch sensorbatch;
 
-private sensorBatch sensorbatch;
+
+    public Light(String value, String type) {
+        this.value= value;
+        this.type= type;
+    }
 
 }
 

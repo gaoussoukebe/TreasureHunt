@@ -4,6 +4,10 @@ package btu.treasurehunt;
  * Created by abdirahmanahmed on 12/4/17.
  */
 
+import com.google.gson.annotations.SerializedName;
+
+
+
 /**
  * Created by abdirahmanahmed on 12/1/17.
  */
@@ -15,13 +19,19 @@ public class UsermapCells {
 
 
 
-    private long id;
+    @SerializedName("id")
+    int id;
+
+    @SerializedName("currentlayer")
+    int currentlayer;
 
 
-
-    private Account account;
     private Cells cells;
+    private Account account;
 
 
-    private int currentlayer;
+    public UsermapCells(int currentlayer) {
+        this.currentlayer = currentlayer;
+
+    }
 }

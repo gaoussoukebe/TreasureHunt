@@ -10,14 +10,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Magnetometerservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("Magnetometer") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<Magnetometer>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("Magnetometer/{isbn}")
+    Call<Magnetometer> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("Magnetometer/new")
+    Call<Magnetometer> create(@Body Magnetometer magnetometer);
 
 
 

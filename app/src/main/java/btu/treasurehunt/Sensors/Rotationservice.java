@@ -3,6 +3,7 @@ package btu.treasurehunt.Sensors;
 import java.util.List;
 
 import btu.treasurehunt.Account;
+import btu.treasurehunt.R;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -10,14 +11,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Rotationservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("Rotation") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<Rotation>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("Rotation/{isbn}")
+    Call<Rotation> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("Rotation/new")
+    Call<Rotation> create(@Body Rotation rotation);
 
 
 

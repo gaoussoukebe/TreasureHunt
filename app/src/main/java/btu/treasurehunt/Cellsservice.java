@@ -9,14 +9,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Cellsservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("cells") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<Cells>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("cells/{isbn}")
+    Call<Cells> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("cells/new")
+    Call<Cells> create(@Body Cells cells);
 
 
 

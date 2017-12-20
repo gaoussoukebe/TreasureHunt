@@ -10,14 +10,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Accelerometerservice {
-    @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
-    Call<List<Account>> all();
+    @GET("Accelerometer") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
+    Call<List<Accelerometer>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("Accelerometer/{isbn}")
+    Call<Accelerometer> get(@Path("isbn") String id);
 
-    @POST("accounts/new")
-    Call<Account> create(@Body Account account);
+    @POST("Accelerometer/new")
+    Call<Accelerometer> create(@Body Accelerometer accelerometer);
 
 
 
