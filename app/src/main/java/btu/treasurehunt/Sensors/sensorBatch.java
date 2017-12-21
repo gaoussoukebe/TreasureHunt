@@ -11,11 +11,7 @@ import btu.treasurehunt.Account;
 
 
 public class sensorBatch {
-
-
     private long id;
-
-
     private String location;
     private Timestamp timesent;
     private Account account;

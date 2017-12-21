@@ -12,8 +12,8 @@ public interface Accountservice {
     @GET("accounts") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
     Call<List<Account>> all();
 
-    @GET("accounts/{isbn}")
-    Call<Account> get(@Path("isbn") String id);
+    @GET("accounts/{id}")
+    Call<Account> get(@Path("id") long id);
 
     @POST("accounts/new")
     Call<Account> create(@Body Account account);

@@ -20,13 +20,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
-
     @Bind(R.id.input_name) EditText _nameText;
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password) EditText _passwordText;
     @Bind(R.id.input_reEnterPassword) EditText _reEnterPasswordText;
     @Bind(R.id.btn_signup) Button _signupButton;
     @Bind(R.id.link_login) TextView _loginLink;
+    SessionManager session;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class SignupActivity extends AppCompatActivity {
                 .build();
         final Accountservice service = retrofit.create(Accountservice.class);
 
-        Account account = new Account(_emailText.getText().toString(),_passwordText.getText().toString(),_nameText.getText().toString());
+        Account account = new Account(_emailText.getText().toString(),BCrypt.hashpw(_passwordText.getText().toString(), BCrypt.gensalt(12)),_nameText.getText().toString());
 //
 
         Call<Account> createCall = service.create(account);
@@ -87,12 +87,14 @@ public class SignupActivity extends AppCompatActivity {
         createCall.enqueue(new Callback<Account>() {
             @Override
             public void onResponse(Call<Account> _, Response<Account> response) {
+                onSignupSuccess();
             }
 
 
             @Override
             public void onFailure(Call<Account> _, Throwable t) {
                 t.printStackTrace();
+                onSignupFailed();
             }
         });
 
@@ -109,8 +111,6 @@ public class SignupActivity extends AppCompatActivity {
                     public void run() {
                         // On complete call either onSignupSuccess or onSignupFailed
                         // depending on success
-                        onSignupSuccess();
-                        //onSignupFailed();
                         progressDialog.dismiss();
                     }
                 }, 3000);
@@ -119,13 +119,14 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
-        startActivity(new Intent(SignupActivity.this, MainActivity.class));
-        setResult(RESULT_OK, null);
-        finish();
+        session.createLoginSession(_nameText.getText().toString(), _emailText.getText().toString());
+        // Staring MainActivity
+        setResult(RESULT_OK,null);
+        this.finish();
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Registration failed", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }

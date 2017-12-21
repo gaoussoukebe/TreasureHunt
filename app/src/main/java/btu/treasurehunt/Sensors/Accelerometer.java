@@ -21,6 +21,7 @@ public class Accelerometer {
     @SerializedName("type")
     String type;
 
+    @SerializedName("sensorbatch")
     private sensorBatch sensorbatch;
 
 

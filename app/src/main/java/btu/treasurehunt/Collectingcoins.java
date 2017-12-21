@@ -218,6 +218,7 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
                                     public void onClick (View v)
                                     {
 
+
                                         Retrofit retrofit = new Retrofit.Builder()
                                                 .baseUrl("https://databaserest.herokuapp.com/")
                                                 .addConverterFactory(GsonConverterFactory.create())
@@ -259,7 +260,6 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
                                                     public void onResponse(Call<Accelerometer> _, Response<Accelerometer> response) {
 
                                                     }
-
 
                                                     @Override
                                                     public void onFailure(Call<Accelerometer> _, Throwable t) {

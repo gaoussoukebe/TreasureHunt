@@ -2,6 +2,7 @@ package btu.treasurehunt;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,7 +25,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
-
+    SessionManager session;
+    public String name;
+    public boolean succes=false;
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password) EditText _passwordText;
     @Bind(R.id.btn_login) Button _loginButton;
@@ -37,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        
+        session = new SessionManager(getApplicationContext());
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -77,43 +80,34 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
 
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        final String email = _emailText.getText().toString();
+        final String password = _passwordText.getText().toString();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://databaserest.herokuapp.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         final Accountservice service = retrofit.create(Accountservice.class);
-
         Call<List<Account>> createCall = service.all();
         createCall.enqueue(new Callback<List<Account>>() {
             @Override
             public void onResponse(Call<List<Account>> _, Response<List<Account>> response) {
-                for (Account b : response.body()) {
-                    String mail = _emailText.getText().toString();
-                    String password = _emailText.getText().toString();
-
-
-                    if(b.email != mail && b.password != password)
-                        onLoginFailed();
-                    else
+                for (final Account b : response.body()) {
+                    if(b.email.equals(email) && BCrypt.checkpw(password,b.password))
+                    {
+                        name=b.name;
                         onLoginSuccess();
-
-
-
-
-
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<List<Account>> _, Throwable t) {
                 t.printStackTrace();
+                onLoginFailed();
             }
         });
 
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
 
 
@@ -122,9 +116,8 @@ public class LoginActivity extends AppCompatActivity {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
+                        if(!succes)
+                        onLoginFailed();
                         progressDialog.dismiss();
                     }
                 }, 3000);
@@ -138,6 +131,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 // TODO: Implement successful signup logic here
                 // By default we just finish the Activity and log them in automatically
+                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(i);
                 this.finish();
             }
         }
@@ -151,7 +146,12 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
-        finish();
+        session.createLoginSession(name, _emailText.getText().toString());
+        // Staring MainActivity
+        succes=true;
+        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(i);
+        this.finish();
     }
 
     public void onLoginFailed() {
