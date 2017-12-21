@@ -30,6 +30,8 @@ public class Accelerometer {
     }
 
 
-
+    public Accelerometer(String value) {
+        this.value=value;
+    }
 }
 

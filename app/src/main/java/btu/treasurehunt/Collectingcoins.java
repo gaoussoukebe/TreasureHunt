@@ -25,6 +25,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import btu.treasurehunt.Sensors.Accelerometer;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import btu.treasurehunt.Sensors.*;
+
 /**
  *
  * Created by Dez on 12/5/2017.
@@ -38,6 +46,7 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     private ProgressBar progressBar;
     private int progressStatus = 0;
     private Handler handler = new Handler();
+    String value;
     ListView list;
     SensorManager sManager;
     float valueLight,valueThermometer,valueStepCounter , valueProximity, valueBarometer,
@@ -208,6 +217,19 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
 
                                     public void onClick (View v)
                                     {
+
+                                        Retrofit retrofit = new Retrofit.Builder()
+                                                .baseUrl("https://databaserest.herokuapp.com/")
+                                                .addConverterFactory(GsonConverterFactory.create())
+                                                .build();
+
+                                        final Accelerometerservice service = retrofit.create(Accelerometerservice.class);
+
+
+
+
+
+
                                         String items ="";
                                         for(String item:checked)
                                         {
@@ -224,7 +246,26 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
                                                 float valuex = valueXaccelerometer;
                                                 float valuey =valueYaccelerometer;
                                                 float valuez = valueZaccelerometer;
+
                                                 Toast.makeText(getContext(), "value of accelerometer is : \n x: " + valuex + "\n y: " + valuey + "\n z: " + valuez  , Toast.LENGTH_LONG).show();
+                                                value=Float.toString(Float.parseFloat("x: "+valueXaccelerometer+"y: "+valueYaccelerometer+"z: "+valueZaccelerometer));
+
+                                                Accelerometer accelerometer = new Accelerometer(value);
+//
+                                                Call<Accelerometer> createCall = service.create(accelerometer);
+
+                                                createCall.enqueue(new Callback<Accelerometer>() {
+                                                    @Override
+                                                    public void onResponse(Call<Accelerometer> _, Response<Accelerometer> response) {
+
+                                                    }
+
+
+                                                    @Override
+                                                    public void onFailure(Call<Accelerometer> _, Throwable t) {
+                                                        t.printStackTrace();
+                                                    }
+                                                });
 
                                             }
 
