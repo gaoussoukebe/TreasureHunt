@@ -49,9 +49,9 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     String value;
     ListView list;
     SensorManager sManager;
-    float valueLight,valueThermometer,valueStepCounter , valueProximity, valueBarometer,
+    float valueLight,valueThermometer,valueStepCounter , valueProximity, valueBarometer=-1,
             valueXaccelerometer , valueYaccelerometer , valueZaccelerometer,
-            valueXmagnetometer, valueYMagnetometer , valueZmagnetometer,
+            valueXmagnetometer=-1, valueYMagnetometer=-1 , valueZmagnetometer=-1,
             valueXgyroscope , valueYgyroscope, valueZgyroscope,
             valueXgravity , valueYgravity, valueZgravity,
             valueXrotation , valueYrotation , valueZrotation;
@@ -182,7 +182,7 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
 
         if (sensorType == Sensor.TYPE_PRESSURE)
         {
-            valueProximity= event.values[0];
+            valueBarometer= event.values[0];
         }
 
     }

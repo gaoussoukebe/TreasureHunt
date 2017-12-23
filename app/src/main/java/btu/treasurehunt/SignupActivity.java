@@ -20,13 +20,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
+
     @Bind(R.id.input_name) EditText _nameText;
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password) EditText _passwordText;
     @Bind(R.id.input_reEnterPassword) EditText _reEnterPasswordText;
     @Bind(R.id.btn_signup) Button _signupButton;
     @Bind(R.id.link_login) TextView _loginLink;
-    SessionManager session;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,6 @@ public class SignupActivity extends AppCompatActivity {
         createCall.enqueue(new Callback<Account>() {
             @Override
             public void onResponse(Call<Account> _, Response<Account> response) {
-                onSignupSuccess();
             }
 
 
@@ -111,6 +110,7 @@ public class SignupActivity extends AppCompatActivity {
                     public void run() {
                         // On complete call either onSignupSuccess or onSignupFailed
                         // depending on success
+                        onSignupSuccess();
                         progressDialog.dismiss();
                     }
                 }, 3000);
@@ -119,14 +119,13 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
-        session.createLoginSession(_nameText.getText().toString(), _emailText.getText().toString());
-        // Staring MainActivity
-        setResult(RESULT_OK,null);
-        this.finish();
+        startActivity(new Intent(SignupActivity.this, MainActivity.class));
+        setResult(RESULT_OK, null);
+        finish();
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Registration failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }
