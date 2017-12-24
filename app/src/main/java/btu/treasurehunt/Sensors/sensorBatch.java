@@ -1,5 +1,7 @@
 package btu.treasurehunt.Sensors;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.sql.Timestamp;
 
 import btu.treasurehunt.Account;
@@ -11,9 +13,12 @@ import btu.treasurehunt.Account;
 
 
 public class sensorBatch {
+    @SerializedName("id")
     private long id;
+    @SerializedName("location")
     private String location;
     private Timestamp timesent;
+    @SerializedName("account")
     private Account account;
     private Accelerometer accelerometer;
     private Barometer barometer;
@@ -26,7 +31,10 @@ public class sensorBatch {
     private Rotation rotation;
     private Thermometer thermometer;
 
-
+    public sensorBatch (Account account, String location) {
+        this.account= account;
+        this.location= location;
+    }
 
 
 

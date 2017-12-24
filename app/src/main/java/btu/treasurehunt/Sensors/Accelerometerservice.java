@@ -13,8 +13,8 @@ public interface Accelerometerservice {
     @GET("Accelerometer") /** Gets data from server app https://restfulap.herokuapp.com/accounts **/
     Call<List<Accelerometer>> all();
 
-    @GET("Accelerometer/{isbn}")
-    Call<Accelerometer> get(@Path("isbn") String id);
+    @GET("Accelerometer/{id}")
+    Call<Accelerometer> get(@Path("id") long id);
 
     @POST("Accelerometer/new")
     Call<Accelerometer> create(@Body Accelerometer accelerometer);

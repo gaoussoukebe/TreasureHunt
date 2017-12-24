@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     SessionManager session;
     public String name;
+    public int id;
     public boolean succes=false;
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password) EditText _passwordText;
@@ -95,8 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                 for (final Account b : response.body()) {
                     if(b.email.equals(email) && BCrypt.checkpw(password,b.password))
                     {
-                        name=b.name;
-                        onLoginSuccess();
+                        onLoginSuccess(b);
                     }
                 }
             }
@@ -144,9 +144,9 @@ public class LoginActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
-    public void onLoginSuccess() {
+    public void onLoginSuccess(Account b) {
         _loginButton.setEnabled(true);
-        session.createLoginSession(name, _emailText.getText().toString());
+        session.createLoginSession(b);
         // Staring MainActivity
         succes=true;
         Intent i = new Intent(LoginActivity.this, MainActivity.class);

@@ -10,7 +10,6 @@ import android.content.SharedPreferences.Editor;
 public class SessionManager {
     // Shared Preferences
     SharedPreferences pref;
-
     // Editor for Shared preferences
     Editor editor;
 
@@ -32,6 +31,9 @@ public class SessionManager {
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
 
+
+    public static final String KEY_ID = "id";
+
     // Constructor
     public SessionManager(Context context){
         this._context = context;
@@ -42,16 +44,16 @@ public class SessionManager {
     /**
      * Create login session
      * */
-    public void createLoginSession(String name, String email){
+    public void createLoginSession(Account account){
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
         // Storing name in pref
-        editor.putString(KEY_NAME, name);
+        editor.putString(KEY_NAME, account.name);
 
         // Storing email in pref
-        editor.putString(KEY_EMAIL, email);
-
+        editor.putString(KEY_EMAIL, account.email);
+        editor.putInt(KEY_ID, account.id);
         // commit changes
         editor.commit();
     }
@@ -90,6 +92,8 @@ public class SessionManager {
 
         // user email id
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
+
+        user.put(KEY_ID, String.valueOf(pref.getInt(KEY_ID, 0)));
 
         // return user
         return user;

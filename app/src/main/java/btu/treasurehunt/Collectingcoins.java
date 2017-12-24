@@ -46,9 +46,16 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     private ProgressBar progressBar;
     private int progressStatus = 0;
     private Handler handler = new Handler();
+    SessionManager session;
     String value;
     ListView list;
+    Account myaccount;
+    sensorBatch batch;
     SensorManager sManager;
+    final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("https://databaserest.herokuapp.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
     float valueLight,valueThermometer,valueStepCounter , valueProximity, valueBarometer=-1,
             valueXaccelerometer , valueYaccelerometer , valueZaccelerometer,
             valueXmagnetometer=-1, valueYMagnetometer=-1 , valueZmagnetometer=-1,
@@ -68,7 +75,28 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
         sList =  sManager.getSensorList(Sensor.TYPE_ALL);
         send =(Button)rootView.findViewById(R.id.sendInfo);
         list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        session = new SessionManager(this.getActivity().getApplicationContext());
 
+
+        Accountservice service = retrofit.create(Accountservice.class);
+        String id="0";
+        if(session.getUserDetails().get("id")!=null && session.getUserDetails().get("id")!="")
+        {
+            id=session.getUserDetails().get("id");
+        }
+        Call<Account> call = service.get(Long.parseLong(id));
+
+        call.enqueue(new Callback<Account>() {
+            @Override
+            public void onResponse(Call<Account> call, Response<Account> account) {
+                myaccount=account.body();
+            }
+
+            @Override
+            public void onFailure(Call<Account> call, Throwable t) {
+                myaccount= new Account(1);
+            }
+        });
         mlight= sManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         mTemperature = sManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         mPedometer = sManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
@@ -218,18 +246,24 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
                                     public void onClick (View v)
                                     {
 
+                                        String single = "single";
+                                        String environment = "environment";
+                                        if(checked.size()!=0) {
+                                            final sensorBatchservice batchservice = retrofit.create(sensorBatchservice.class);
+                                            sensorBatch sensorBatch = new sensorBatch(myaccount, "here");
+                                            Call<sensorBatch> createbatchCall = batchservice.create(sensorBatch);
 
-                                        Retrofit retrofit = new Retrofit.Builder()
-                                                .baseUrl("https://databaserest.herokuapp.com/")
-                                                .addConverterFactory(GsonConverterFactory.create())
-                                                .build();
+                                            createbatchCall.enqueue(new Callback<sensorBatch>() {
+                                                @Override
+                                                public void onResponse(Call<sensorBatch> _, Response<sensorBatch> response) {
+                                                }
 
-                                        final Accelerometerservice service = retrofit.create(Accelerometerservice.class);
-
-
-
-
-
+                                                @Override
+                                                public void onFailure(Call<sensorBatch> _, Throwable t) {
+                                                    t.printStackTrace();
+                                                }
+                                            });
+                                        }
 
                                         String items ="";
                                         for(String item:checked)
@@ -247,11 +281,12 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
                                                 float valuex = valueXaccelerometer;
                                                 float valuey =valueYaccelerometer;
                                                 float valuez = valueZaccelerometer;
+                                                value="x: "+valueXaccelerometer+", y: "+valueYaccelerometer+", z: "+valueZaccelerometer;
+                                                Toast.makeText(getContext(), Long.toString(Long.parseLong(session.getUserDetails().get("id"))) , Toast.LENGTH_LONG).show();
 
-                                                Toast.makeText(getContext(), "value of accelerometer is : \n x: " + valuex + "\n y: " + valuey + "\n z: " + valuez  , Toast.LENGTH_LONG).show();
-                                                value=Float.toString(Float.parseFloat("x: "+valueXaccelerometer+"y: "+valueYaccelerometer+"z: "+valueZaccelerometer));
 
-                                                Accelerometer accelerometer = new Accelerometer(value);
+                                                final Accelerometerservice service = retrofit.create(Accelerometerservice.class);
+                                               Accelerometer accelerometer = new Accelerometer(value,batch,single);
 //
                                                 Call<Accelerometer> createCall = service.create(accelerometer);
 
@@ -266,7 +301,6 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
                                                         t.printStackTrace();
                                                     }
                                                 });
-
                                             }
 
                                             if(checked.get(i) == "Magnetometer")

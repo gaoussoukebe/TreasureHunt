@@ -21,7 +21,9 @@ public class Account {
         this.password = password;
         this.name= name;
     }
-
+    public Account(int id) {
+        this.id=id;
+    }
 
 
 }

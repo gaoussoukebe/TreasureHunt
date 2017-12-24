@@ -25,9 +25,10 @@ public class Accelerometer {
     private sensorBatch sensorbatch;
 
 
-    public Accelerometer(String value, String type) {
+    public Accelerometer(String value, sensorBatch batch, String type) {
         this.value= value;
-        this.type= type;
+        this.type=type;
+        this.sensorbatch= batch;
     }
 
 
