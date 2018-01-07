@@ -40,7 +40,8 @@ public class SplashActivity extends AppCompatActivity {
     private LocationRequest mLocationRequest;
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
-
+    private int i =0;
+    private int j =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,23 +86,25 @@ public class SplashActivity extends AppCompatActivity {
                     public void onLocationResult(LocationResult locationResult) {
                         Location location=locationResult.getLastLocation();
                         if (location != null){
-                            double latti = location.getLatitude();
-                            double longi = location.getLongitude();
+                            if(i==0) {
+                                double latti = location.getLatitude();
+                                double longi = location.getLongitude();
 
-                            ArrayList<LatLng> campusOptions = new ArrayList<LatLng>();
-                            campusOptions.add(new LatLng(40.189982, 29.127641));
-                            campusOptions.add(new LatLng(40.186695, 29.128242));
-                            campusOptions.add(new LatLng(40.186199, 29.130753));
-                            campusOptions.add(new LatLng(40.189920, 29.130887));
-                            campusOptions.add(new LatLng(40.189982, 29.127641));
-                            if(isPointInPolygon(new LatLng(latti,longi),campusOptions)) {
-                                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                                // close splash activity
-                                finish();
+                                ArrayList<LatLng> campusOptions = new ArrayList<LatLng>();
+                                campusOptions.add(new LatLng(40.189982, 29.127641));
+                                campusOptions.add(new LatLng(40.186695, 29.128242));
+                                campusOptions.add(new LatLng(40.186199, 29.130753));
+                                campusOptions.add(new LatLng(40.189920, 29.130887));
+                                campusOptions.add(new LatLng(40.189982, 29.127641));
+                                if (isPointInPolygon(new LatLng(latti, longi), campusOptions)) {
+                                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                                    // close splash activity
+                                    finish();
+                                } else {
+                                    Toast.makeText(getBaseContext(), "Lattitude " + latti + "Longitude " + longi, Toast.LENGTH_LONG).show();
+                                }
                             }
-                            else{
-                                Toast.makeText(getBaseContext() , "Lattitude " + latti + "Longitude " + longi , Toast.LENGTH_LONG).show();
-                            }
+                            i++;
                             //  ((EditText)findViewById(R.id.etLocationLong)).setText("Longitude: " + longi);
                         } else {
                             Toast.makeText(getBaseContext() , "We can't locate your current position!" , Toast.LENGTH_LONG).show();
@@ -139,7 +142,7 @@ public class SplashActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                        Log.d("SplashActivity", "Error trying to get last GPS location");
                         e.printStackTrace();
                     }
                 });
