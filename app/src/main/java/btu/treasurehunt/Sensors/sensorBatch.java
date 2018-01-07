@@ -3,6 +3,7 @@ package btu.treasurehunt.Sensors;
 import com.google.gson.annotations.SerializedName;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import btu.treasurehunt.Account;
 
@@ -14,31 +15,39 @@ import btu.treasurehunt.Account;
 
 public class sensorBatch {
     @SerializedName("id")
-    private long id;
-    @SerializedName("location")
-    private String location;
-    private Timestamp timesent;
+    public int id;
+    @SerializedName("latitude")
+    public double latitude;
+    @SerializedName("longitude")
+    public double longitude;
     @SerializedName("account")
-    private Account account;
-    private Accelerometer accelerometer;
-    private Barometer barometer;
-    private Gravity gravity;
-    private Gyroscope gyroscope;
-    private Light light;
-    private Magnetometer magnetometer;
-    private Pedometer pedometer;
-    private Proximity proximity;
-    private Rotation rotation;
-    private Thermometer thermometer;
-
-    public sensorBatch (Account account, String location) {
+    public Account account;
+    @SerializedName("accelerometer")
+    public Accelerometer accelerometer;
+    @SerializedName("barometer")
+    public Barometer barometer;
+    @SerializedName("gravity")
+    public Gravity gravity;
+    @SerializedName("gyroscope")
+    public Gyroscope gyroscope;
+    @SerializedName("light")
+    public Light light;
+    @SerializedName("magnetometer")
+    public Magnetometer magnetometer;
+    @SerializedName("pedometer")
+    public Pedometer pedometer;
+    @SerializedName("proximity")
+    public Proximity proximity;
+    @SerializedName("rotation")
+    public Rotation rotation;
+    @SerializedName("thermometer")
+    public Thermometer thermometer;
+    @SerializedName("coins")
+    public int coins;
+    public sensorBatch (){}
+    public sensorBatch (Account account, double latitude, double longitude) {
         this.account= account;
-        this.location= location;
+        this.latitude= latitude;
+        this.longitude=longitude;
     }
-
-
-
-
-
-
 }

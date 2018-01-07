@@ -18,12 +18,14 @@ public class Gyroscope {
     @SerializedName("type")
     String type;
 
-    private sensorBatch sensorbatch;
+    @SerializedName("sensorbatch")
+sensorBatch sensorbatch;
 
 
-    public Gyroscope(String value, String type) {
+    public Gyroscope(String value, sensorBatch batch, String type) {
         this.value= value;
-        this.type= type;
+        this.type=type;
+this.sensorbatch= batch;
     }
 
 

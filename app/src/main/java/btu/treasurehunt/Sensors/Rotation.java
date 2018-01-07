@@ -20,12 +20,14 @@ public class Rotation {
     @SerializedName("type")
     String type;
 
-    private sensorBatch sensorbatch;
+    @SerializedName("sensorbatch")
+sensorBatch sensorbatch;
 
 
-    public Rotation(String value, String type) {
+    public Rotation(String value, sensorBatch batch, String type) {
         this.value= value;
-        this.type= type;
+        this.type=type;
+this.sensorbatch= batch;
     }
 
 

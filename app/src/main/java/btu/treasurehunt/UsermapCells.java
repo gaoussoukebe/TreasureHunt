@@ -24,14 +24,15 @@ public class UsermapCells {
 
     @SerializedName("currentlayer")
     int currentlayer;
-
-
-    private Cells cells;
-    private Account account;
-
-
+    @SerializedName("cells")
+    Cells cells;
+    @SerializedName("account")
+    Account account;
     public UsermapCells(int currentlayer) {
         this.currentlayer = currentlayer;
 
+    }
+    public UsermapCells(int currentlayer,int id) {
+        this.cells=new Cells(0,id);
     }
 }

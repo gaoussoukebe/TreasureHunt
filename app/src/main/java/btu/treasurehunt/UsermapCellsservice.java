@@ -13,10 +13,14 @@ public interface UsermapCellsservice {
     Call<List<UsermapCells>> all();
 
     @GET("usermapcells/{isbn}")
-    Call<UsermapCells> get(@Path("isbn") String id);
+    Call<UsermapCells> get(@Path("isbn") long id);
 
     @POST("usermapcells/new")
     Call<UsermapCells> create(@Body UsermapCells usermapCells);
+    @GET("usermapcells/dig/{id}/{cellid}")
+    Call<UsermapCells> dig(@Path("id") long id, @Path("cellid") long cellid);
+    @GET("usermapcells/user/{id}")
+    Call<List<UsermapCells>> user(@Path("id") long id);
 
 
 

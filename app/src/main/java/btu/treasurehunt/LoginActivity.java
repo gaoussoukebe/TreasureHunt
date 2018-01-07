@@ -93,10 +93,11 @@ public class LoginActivity extends AppCompatActivity {
         createCall.enqueue(new Callback<List<Account>>() {
             @Override
             public void onResponse(Call<List<Account>> _, Response<List<Account>> response) {
-                for (final Account b : response.body()) {
-                    if(b.email.equals(email) && BCrypt.checkpw(password,b.password))
-                    {
-                        onLoginSuccess(b);
+                if (response.body()!=null) {
+                    for (final Account b : response.body()) {
+                        if (b.email.equals(email) && BCrypt.checkpw(password, b.password)) {
+                            onLoginSuccess(b);
+                        }
                     }
                 }
             }
@@ -131,9 +132,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 // TODO: Implement successful signup logic here
                 // By default we just finish the Activity and log them in automatically
-                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(i);
-                this.finish();
             }
         }
     }

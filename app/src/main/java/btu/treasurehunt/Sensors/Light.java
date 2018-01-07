@@ -20,12 +20,14 @@ public class Light {
     @SerializedName("type")
     String type;
 
-    private sensorBatch sensorbatch;
+    @SerializedName("sensorbatch")
+sensorBatch sensorbatch;
 
 
-    public Light(String value, String type) {
+    public Light(String value, sensorBatch batch, String type) {
         this.value= value;
-        this.type= type;
+        this.type=type;
+this.sensorbatch= batch;
     }
 
 }

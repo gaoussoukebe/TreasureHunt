@@ -18,12 +18,14 @@ public class Gravity {
     @SerializedName("type")
     String type;
 
-    private sensorBatch sensorbatch;
+    @SerializedName("sensorbatch")
+sensorBatch sensorbatch;
 
 
-    public Gravity(String value, String type) {
+    public Gravity(String value, sensorBatch batch, String type) {
         this.value= value;
-        this.type= type;
+        this.type=type;
+this.sensorbatch= batch;
     }
 
 }

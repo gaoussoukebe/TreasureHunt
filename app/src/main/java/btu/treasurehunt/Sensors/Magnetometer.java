@@ -20,12 +20,14 @@ public class Magnetometer {
     @SerializedName("type")
     String type;
 
-    private sensorBatch sensorbatch;
+    @SerializedName("sensorbatch")
+sensorBatch sensorbatch;
 
 
-    public Magnetometer(String value, String type) {
+    public Magnetometer(String value, sensorBatch batch, String type) {
         this.value= value;
-        this.type= type;
+        this.type=type;
+this.sensorbatch= batch;
     }
 
 

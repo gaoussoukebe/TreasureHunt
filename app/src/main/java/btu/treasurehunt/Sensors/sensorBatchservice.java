@@ -19,8 +19,7 @@ public interface sensorBatchservice {
     @POST("sensorBatch/new")
     Call<sensorBatch> create(@Body sensorBatch sensorBatch);
 
-
-
-
+    @GET("sensorBatch/coins/{id}")
+    Call<sensorBatch> getcoins(@Path("id") long id);
 
 }

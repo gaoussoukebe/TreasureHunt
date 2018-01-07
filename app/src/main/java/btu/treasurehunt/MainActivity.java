@@ -2,6 +2,7 @@ package btu.treasurehunt;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 
@@ -10,6 +11,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static btu.treasurehunt.R.drawable.coin;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
+    public FloatingActionButton fab;
+    public TextView fabtext;
+    Account myaccount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,9 +57,50 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setAlpha((float)0);
+        fabtext = (TextView) findViewById(R.id.fabtext);
+        fabtext.setText("0");
+        fabtext.setTextColor(0xffb5993f);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                // do your work
+                switch(position) {
+                    case 0:
+                        fabtext.setVisibility(View.GONE);
+                        break;
+                    case 1:
+
+                        final Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl("https://databaserest.herokuapp.com/")
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build();
+                        Accountservice service = retrofit.create(Accountservice.class);
+                        String id="0";
+                        if(session.isLoggedIn())
+                        {
+                            id=session.getUserDetails().get("id");
+                        }
+                        Call<Account> call = service.get(Long.parseLong(id));
+                        call.enqueue(new Callback<Account>() {
+                            @Override
+                            public void onResponse(Call<Account> call, Response<Account> account) {
+                                myaccount=account.body();
+                                fabtext.setText(Integer.toString(myaccount.coins));
+                            }
+
+                            @Override
+                            public void onFailure(Call<Account> call, Throwable t) {
+                            }
+                        });
+                        fabtext.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
 
     }
 

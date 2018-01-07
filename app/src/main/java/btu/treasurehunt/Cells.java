@@ -25,13 +25,17 @@ public class Cells {
 
     @SerializedName("numlayers")
     int numlayers;
-
-
-    private sensorBatch sensorbatch;
-
+    @SerializedName("users")
+    Set<UsermapCells> users;
+    @SerializedName("specialObjects")
+    SpecialObjects specialObjects;
 
     public Cells(int numlayers) {
         this.numlayers = numlayers;
+
+    }
+    public Cells(int numlayers,int id) {
+        this.id = id;
 
     }
 }

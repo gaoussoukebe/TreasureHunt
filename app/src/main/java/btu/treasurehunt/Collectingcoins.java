@@ -1,10 +1,19 @@
 package btu.treasurehunt;
 
 
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -32,6 +41,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import btu.treasurehunt.Sensors.*;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import static btu.treasurehunt.R.id.container;
 
 /**
  *
@@ -39,6 +55,8 @@ import btu.treasurehunt.Sensors.*;
  */
 
 public class Collectingcoins extends  Fragment implements SensorEventListener {
+    static final int REQUEST_LOCATION = 1;
+    LocationManager locationManager;
     ArrayList<String> checked = new ArrayList<>();
     private Button send;
     List<String> sNames;
@@ -50,15 +68,11 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     String value;
     ListView list;
     Account myaccount;
-    sensorBatch batch;
     SensorManager sManager;
-    final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://databaserest.herokuapp.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-    float valueLight,valueThermometer,valueStepCounter , valueProximity, valueBarometer=-1,
+    int Count=0;
+    float valueLight,valueThermometer,valueStepCounter , valueProximity, valueBarometer,
             valueXaccelerometer , valueYaccelerometer , valueZaccelerometer,
-            valueXmagnetometer=-1, valueYMagnetometer=-1 , valueZmagnetometer=-1,
+            valueXmagnetometer, valueYMagnetometer , valueZmagnetometer,
             valueXgyroscope , valueYgyroscope, valueZgyroscope,
             valueXgravity , valueYgravity, valueZgravity,
             valueXrotation , valueYrotation , valueZrotation;
@@ -67,8 +81,10 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
+        final ProgressDialog progressDialog = new ProgressDialog(Collectingcoins.this.getActivity(),
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
         View rootView = inflater.inflate(R.layout.collecting_coins, container, false);
         list = (ListView) rootView.findViewById(R.id.list);
         sManager = (SensorManager)this.getActivity().getSystemService(getActivity().SENSOR_SERVICE);
@@ -76,27 +92,19 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
         send =(Button)rootView.findViewById(R.id.sendInfo);
         list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         session = new SessionManager(this.getActivity().getApplicationContext());
-
-
+        locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+        ((MainActivity)getActivity()).fabtext.setVisibility(View.GONE);
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://databaserest.herokuapp.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
         Accountservice service = retrofit.create(Accountservice.class);
         String id="0";
-        if(session.getUserDetails().get("id")!=null && session.getUserDetails().get("id")!="")
+        if(session.isLoggedIn())
         {
             id=session.getUserDetails().get("id");
         }
-        Call<Account> call = service.get(Long.parseLong(id));
 
-        call.enqueue(new Callback<Account>() {
-            @Override
-            public void onResponse(Call<Account> call, Response<Account> account) {
-                myaccount=account.body();
-            }
-
-            @Override
-            public void onFailure(Call<Account> call, Throwable t) {
-                myaccount= new Account(1);
-            }
-        });
         mlight= sManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         mTemperature = sManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         mPedometer = sManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
@@ -136,7 +144,17 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
 
         } );
         listener();
+        Call<Account> call = service.get(Long.parseLong(id));
+        call.enqueue(new Callback<Account>() {
+            @Override
+            public void onResponse(Call<Account> call, Response<Account> account) {
+                myaccount=account.body();
+                progressDialog.dismiss();
+            }
 
+            @Override
+            public void onFailure(Call<Account> call, Throwable t) {}
+        });
         return rootView;
 
 
@@ -147,7 +165,6 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     {
 
     }
-
     @Override
     public final void onSensorChanged(SensorEvent event)
     {
@@ -219,6 +236,7 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     public void onResume()
     {
         super.onResume();
+
         sManager.registerListener(this,mlight, SensorManager.SENSOR_DELAY_NORMAL);
         sManager.registerListener(this,mTemperature,SensorManager.SENSOR_DELAY_NORMAL);
         sManager.registerListener(this,mPedometer,SensorManager.SENSOR_DELAY_NORMAL);
@@ -227,6 +245,7 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
         sManager.registerListener(this,mProximity,SensorManager.SENSOR_DELAY_NORMAL);
         sManager.registerListener(this,mGravity,SensorManager.SENSOR_DELAY_NORMAL);
         sManager.registerListener(this,mRotation, SensorManager.SENSOR_DELAY_NORMAL );
+        sManager.registerListener(this,mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
         sManager.registerListener(this,mBarometer , SensorManager.SENSOR_DELAY_NORMAL);
     }
     @Override
@@ -245,134 +264,49 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
 
                                     public void onClick (View v)
                                     {
-
-                                        String single = "single";
-                                        String environment = "environment";
                                         if(checked.size()!=0) {
-                                            final sensorBatchservice batchservice = retrofit.create(sensorBatchservice.class);
-                                            sensorBatch sensorBatch = new sensorBatch(myaccount, "here");
-                                            Call<sensorBatch> createbatchCall = batchservice.create(sensorBatch);
 
-                                            createbatchCall.enqueue(new Callback<sensorBatch>() {
-                                                @Override
-                                                public void onResponse(Call<sensorBatch> _, Response<sensorBatch> response) {
+                                            if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                                                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                                                    != PackageManager.PERMISSION_GRANTED) {
+
+                                                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+
+                                            } else {
+                                                Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                                                if (location != null){
+                                                    double latti = location.getLatitude();
+                                                    double longi = location.getLongitude();
+                                                    Retrofit retrofit = new Retrofit.Builder()
+                                                            .baseUrl("https://databaserest.herokuapp.com/")
+                                                            .addConverterFactory(GsonConverterFactory.create())
+                                                            .build();
+                                                    sensorBatch sensorBatch = new sensorBatch(myaccount,latti,longi);
+                                                    final sensorBatchservice batchservice = retrofit.create(sensorBatchservice.class);
+                                                    Call<sensorBatch> createbatchCall = batchservice.create(sensorBatch);
+
+                                                    createbatchCall.enqueue(new Callback<sensorBatch>() {
+                                                        @Override
+                                                        public void onResponse(Call<sensorBatch> _, Response<sensorBatch> response) {
+
+                                                            sensorbatchsucces(response.body());
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Call<sensorBatch> _, Throwable t) {
+
+                                                            t.printStackTrace();
+                                                        }
+                                                    });
+                                                    //  ((EditText)findViewById(R.id.etLocationLong)).setText("Longitude: " + longi);
+                                                } else {
+
                                                 }
-
-                                                @Override
-                                                public void onFailure(Call<sensorBatch> _, Throwable t) {
-                                                    t.printStackTrace();
-                                                }
-                                            });
-                                        }
-
-                                        String items ="";
-                                        for(String item:checked)
-                                        {
-                                            items+= "-"+ item + "\n";
-                                        }
-
-                                        Toast.makeText(getContext(),"you have selected \n" + items, Toast.LENGTH_LONG ).show();
-
-                                        String itemcheck ;
-                                        for(int i = 0 ; i<checked.size() ; i++)
-                                        {
-                                            if(checked.get(i) == "Accelerometer")
-                                            {
-                                                float valuex = valueXaccelerometer;
-                                                float valuey =valueYaccelerometer;
-                                                float valuez = valueZaccelerometer;
-                                                value="x: "+valueXaccelerometer+", y: "+valueYaccelerometer+", z: "+valueZaccelerometer;
-                                                Toast.makeText(getContext(), Long.toString(Long.parseLong(session.getUserDetails().get("id"))) , Toast.LENGTH_LONG).show();
-
-
-                                                final Accelerometerservice service = retrofit.create(Accelerometerservice.class);
-                                               Accelerometer accelerometer = new Accelerometer(value,batch,single);
-//
-                                                Call<Accelerometer> createCall = service.create(accelerometer);
-
-                                                createCall.enqueue(new Callback<Accelerometer>() {
-                                                    @Override
-                                                    public void onResponse(Call<Accelerometer> _, Response<Accelerometer> response) {
-
-                                                    }
-
-                                                    @Override
-                                                    public void onFailure(Call<Accelerometer> _, Throwable t) {
-                                                        t.printStackTrace();
-                                                    }
-                                                });
                                             }
 
-                                            if(checked.get(i) == "Magnetometer")
-                                            {
-                                                float valuex = valueXmagnetometer;
-                                                float valuey =valueYMagnetometer;
-                                                float valuez = valueZmagnetometer;
-                                                Toast.makeText(getContext(), "value of magnetometer is : \n x: " + valuex + "\n y: " + valuey + "\n z: " + valuez  , Toast.LENGTH_LONG).show();
 
 
-                                            }
-                                            if(checked.get(i) == "Gyroscope")
-                                            {
-                                                float valuex = valueXgyroscope;
-                                                float valuey =valueXgyroscope;
-                                                float valuez = valueZgyroscope;
-                                                Toast.makeText(getContext(), "value of gyroscope is : \n x: " + valuex + "\n y: " + valuey + "\n z: " + valuez  , Toast.LENGTH_LONG).show();
-
-                                            }
-
-                                            if(checked.get(i) == "Proximity Sensor")
-                                            {
-                                                float Value = valueProximity ;
-                                                Toast.makeText(getContext(), "value of Proximity Sensor is : " + Value , Toast.LENGTH_SHORT).show();
-
-                                            }
-                                            if(checked.get(i) == "Light Sensor")
-                                            {
-
-
-                                                float Value = valueLight ;
-                                                Toast.makeText(getContext(), "value of Light Sensor is : " + Value , Toast.LENGTH_SHORT).show();
-
-                                            }
-
-                                            if(checked.get(i) == "Gravity Sensor")
-                                            {
-                                                float valuex = valueXgravity;
-                                                float valuey =valueYgravity;
-                                                float valuez = valueZgravity;
-                                                Toast.makeText(getContext(), "value of gravity is : \n x: " + valuex + "\n y: " + valuey + "\n z: " + valuez  , Toast.LENGTH_LONG).show();
-
-                                            }
-
-                                            if(checked.get(i) == "Rotation Sensor")
-                                            {
-                                                float valuex = valueXrotation;
-                                                float valuey =valueYrotation;
-                                                float valuez = valueZrotation;
-                                                Toast.makeText(getContext(), "value of Rotation is : \n x: " + valuex + "\n y: " + valuey + "\n z: " + valuez  , Toast.LENGTH_LONG).show();
-
-
-                                            }
-                                            if(checked.get(i) == "Pedometer")
-                                            {
-                                                float Value = valueStepCounter ;
-                                                Toast.makeText(getContext(), "value of Pedometer is : " + Value , Toast.LENGTH_SHORT).show();
-
-                                            }
-                                            if(checked.get(i) == "Barometer")
-                                            {
-                                                float Value = valueBarometer ;
-                                                Toast.makeText(getContext(), "value of Barometer is : " + Value , Toast.LENGTH_SHORT).show();
-
-                                            }
-
-                                            if(checked.get(i) == "Thermometer")
-                                            {
-                                                float Value = valueThermometer ;
-                                                Toast.makeText(getContext(), "value of Thermometer is : " + Value , Toast.LENGTH_SHORT).show();
-
-                                            }
                                         }
 
                /* send.setVisibility(View.GONE);
@@ -409,5 +343,267 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
 
         );
     }
+    public void getcoins(int size, sensorBatch batch)
+    {
+        if(Count==size)
+        {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://databaserest.herokuapp.com/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            final sensorBatchservice Batchservice = retrofit.create(sensorBatchservice.class);
+            Call<sensorBatch> createCall = Batchservice.getcoins(batch.id);
+
+            createCall.enqueue(new Callback<sensorBatch>() {
+                @Override
+                public void onResponse(Call<sensorBatch> _, Response<sensorBatch> response) {
+
+                    Toast.makeText(getContext(),"You received "+response.body().coins, Toast.LENGTH_LONG ).show();
+                }
+
+                @Override
+                public void onFailure(Call<sensorBatch> _, Throwable t) {
+
+                    t.printStackTrace();
+                }
+            });
+            Count=0;
+        }
+    }
+    public void sensorbatchsucces(final sensorBatch batch)
+    {String single = "single";
+        String environment = "environment";
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://databaserest.herokuapp.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        String itemcheck ;
+
+        for(int i = 0 ; i<checked.size() ; i++)
+        {
+            if(checked.get(i) == "Accelerometer")
+            {
+                value="x: "+valueXaccelerometer+", y: "+valueYaccelerometer+", z: "+valueZaccelerometer;
+                Accelerometer accelerometer = new Accelerometer(value,batch,single);
+                final Accelerometerservice Aservice = retrofit.create(Accelerometerservice.class);
+                Call<Accelerometer> createCall = Aservice.create(accelerometer);
+
+                createCall.enqueue(new Callback<Accelerometer>() {
+                    @Override
+                    public void onResponse(Call<Accelerometer> _, Response<Accelerometer> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Accelerometer> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+            }
+
+            if(checked.get(i) == "Magnetometer")
+            {
+                float valuex = valueXmagnetometer;
+                float valuey =valueYMagnetometer;
+                float valuez = valueZmagnetometer;
+                value="x: "+valueXmagnetometer+", y: "+valueYMagnetometer+", z: "+valueZmagnetometer;
+                Magnetometer magnetometer = new Magnetometer(value,batch,environment);
+                final Magnetometerservice Mservice = retrofit.create(Magnetometerservice.class);
+                Call<Magnetometer> createCall = Mservice.create(magnetometer);
+
+                createCall.enqueue(new Callback<Magnetometer>() {
+                    @Override
+                    public void onResponse(Call<Magnetometer> _, Response<Magnetometer> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Magnetometer> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+
+            }
+            if(checked.get(i) == "Gyroscope")
+            {
+                value="x: "+valueXgyroscope+", y: "+valueYgyroscope+", z: "+valueZgyroscope;
+                Gyroscope gyroscope = new Gyroscope(value,batch,single);
+                final Gyroscopeservice Aservice = retrofit.create(Gyroscopeservice.class);
+                Call<Gyroscope> createCall = Aservice.create(gyroscope);
+
+                createCall.enqueue(new Callback<Gyroscope>() {
+                    @Override
+                    public void onResponse(Call<Gyroscope> _, Response<Gyroscope> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Gyroscope> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+            }
+
+            if(checked.get(i) == "Proximity Sensor")
+            {
+                value=String.valueOf(valueProximity);
+                Proximity proximity = new Proximity(value,batch,single);
+                final Proximityservice Aservice = retrofit.create(Proximityservice.class);
+                Call<Proximity> createCall = Aservice.create(proximity);
+
+                createCall.enqueue(new Callback<Proximity>() {
+                    @Override
+                    public void onResponse(Call<Proximity> _, Response<Proximity> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Proximity> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+
+            }
+            if(checked.get(i) == "Light Sensor")
+            {
+                value=String.valueOf(valueLight);
+                Light light = new Light(value,batch,environment);
+                final Lightservice Aservice = retrofit.create(Lightservice.class);
+                Call<Light> createCall = Aservice.create(light);
+
+                createCall.enqueue(new Callback<Light>() {
+                    @Override
+                    public void onResponse(Call<Light> _, Response<Light> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Light> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+            }
+
+            if(checked.get(i) == "Gravity Sensor")
+            {
+                value="x: "+valueXgravity+", y: "+valueYgravity+", z: "+valueZgravity;
+                Gravity gravity = new Gravity(value,batch,single);
+                final Gravityservice Aservice = retrofit.create(Gravityservice.class);
+                Call<Gravity> createCall = Aservice.create(gravity);
+
+                createCall.enqueue(new Callback<Gravity>() {
+                    @Override
+                    public void onResponse(Call<Gravity> _, Response<Gravity> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Gravity> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+            }
+
+            if(checked.get(i) == "Rotation Sensor")
+            {
+                value="x: "+valueXrotation+", y: "+valueYrotation+", z: "+valueZrotation;
+                Rotation rotation = new Rotation(value,batch,single);
+                final Rotationservice Aservice = retrofit.create(Rotationservice.class);
+                Call<Rotation> createCall = Aservice.create(rotation);
+
+                createCall.enqueue(new Callback<Rotation>() {
+                    @Override
+                    public void onResponse(Call<Rotation> _, Response<Rotation> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Rotation> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+            }
+            if(checked.get(i) == "Pedometer")
+            {
+                value=String.valueOf(valueStepCounter);
+                Pedometer pedometer = new Pedometer(value,batch,single);
+                final Pedometerservice Aservice = retrofit.create(Pedometerservice.class);
+                Call<Pedometer> createCall = Aservice.create(pedometer);
+
+                createCall.enqueue(new Callback<Pedometer>() {
+                    @Override
+                    public void onResponse(Call<Pedometer> _, Response<Pedometer> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Pedometer> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+
+            }
+            if(checked.get(i) == "Barometer")
+            {
+                value=String.valueOf(valueBarometer);
+                Barometer barometer = new Barometer(value,batch,environment);
+                final Barometerservice Aservice = retrofit.create(Barometerservice.class);
+                Call<Barometer> createCall = Aservice.create(barometer);
+
+                createCall.enqueue(new Callback<Barometer>() {
+                    @Override
+                    public void onResponse(Call<Barometer> _, Response<Barometer> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Barometer> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+            }
+
+            if(checked.get(i) == "Thermometer")
+            {
+                value=String.valueOf(valueThermometer);
+                Thermometer thermometer = new Thermometer(value,batch,environment);
+                final Thermometerservice Aservice = retrofit.create(Thermometerservice.class);
+                Call<Thermometer> createCall = Aservice.create(thermometer);
+
+                createCall.enqueue(new Callback<Thermometer>() {
+                    @Override
+                    public void onResponse(Call<Thermometer> _, Response<Thermometer> response) {
+                        Count++;
+                        getcoins(checked.size(), batch);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Thermometer> _, Throwable t) {
+
+                        t.printStackTrace();
+                    }
+                });
+            }
+        }
+    }
+
 }
 

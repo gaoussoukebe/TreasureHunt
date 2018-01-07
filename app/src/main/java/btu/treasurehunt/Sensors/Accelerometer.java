@@ -22,18 +22,13 @@ public class Accelerometer {
     String type;
 
     @SerializedName("sensorbatch")
-    private sensorBatch sensorbatch;
+    sensorBatch sensorbatch;
 
 
     public Accelerometer(String value, sensorBatch batch, String type) {
         this.value= value;
         this.type=type;
         this.sensorbatch= batch;
-    }
-
-
-    public Accelerometer(String value) {
-        this.value=value;
     }
 }
 
