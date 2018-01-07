@@ -104,6 +104,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
         progressDialog1 = new ProgressDialog(Collectingcoins.this.getActivity(),
                 R.style.AppTheme_Dark_Dialog);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setIndeterminate(true);
         progressDialog.show();
         View rootView = inflater.inflate(R.layout.collecting_coins, container, false);
@@ -288,6 +289,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
                                             }
                                             progressDialog1.setIndeterminate(true);
+                                            progressDialog1.setCanceledOnTouchOutside(false);
                                             progressDialog1.show();
                                             Location location = ((MyApplication) getActivity().getApplication()).getCurrentLocation();
                                             if (location != null) {
