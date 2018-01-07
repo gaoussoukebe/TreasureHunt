@@ -156,6 +156,7 @@ public class SplashActivity extends AppCompatActivity implements ConnectivityRec
                                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                                     // close splash activity
                                     finish();
+                                    i++;
                                 } else {
                                     //notincompus
                                     Toast.makeText(getBaseContext(), "Lattitude " + latti + "Longitude " + longi, Toast.LENGTH_LONG).show();
