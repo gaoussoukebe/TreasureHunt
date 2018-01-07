@@ -97,7 +97,6 @@ public class SplashActivity extends AppCompatActivity implements ConnectivityRec
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-
         // Create LocationSettingsRequest object using location request
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
@@ -129,20 +128,20 @@ public class SplashActivity extends AppCompatActivity implements ConnectivityRec
                                 double longi = location.getLongitude();
 
                                 ArrayList<LatLng> campusOptions = new ArrayList<LatLng>();
-                                campusOptions.add(new LatLng(40.189982, 29.127641));
+                                campusOptions.add(new LatLng(40.187982, 29.127641));
                                 campusOptions.add(new LatLng(40.186695, 29.128242));
                                 campusOptions.add(new LatLng(40.186199, 29.130753));
-                                campusOptions.add(new LatLng(40.189920, 29.130887));
-                                campusOptions.add(new LatLng(40.189982, 29.127641));
+                                campusOptions.add(new LatLng(40.187920, 29.130887));
+                                campusOptions.add(new LatLng(40.187982, 29.127641));
                                 if (isPointInPolygon(new LatLng(latti, longi), campusOptions)) {
+                                    i++;
                                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                                     // close splash activity
                                     finish();
                                 } else {
-                                    Toast.makeText(getBaseContext(), "Lattitude " + latti + "Longitude " + longi, Toast.LENGTH_LONG).show();
+
                                 }
                             }
-                            i++;
                             //  ((EditText)findViewById(R.id.etLocationLong)).setText("Longitude: " + longi);
                         } else {
                             Toast.makeText(getBaseContext() , "We can't locate your current position!" , Toast.LENGTH_LONG).show();
@@ -174,6 +173,7 @@ public class SplashActivity extends AppCompatActivity implements ConnectivityRec
                         // GPS location can be null if GPS is switched off
                         if (location != null) {
                             onLocationChanged(location);
+
                         }
                     }
                 })
@@ -191,6 +191,7 @@ public class SplashActivity extends AppCompatActivity implements ConnectivityRec
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        ((MyApplication) this.getApplication()).setCurrentLocation(location);
         // You can now create a LatLng Object for use with maps
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
     }
