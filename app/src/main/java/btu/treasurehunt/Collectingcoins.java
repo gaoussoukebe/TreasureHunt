@@ -4,6 +4,7 @@ package btu.treasurehunt;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.SensorEvent;
@@ -17,6 +18,7 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -168,6 +170,17 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
             @Override
             public void onFailure(Call<Account> call, Throwable t) {
+                progressDialog.dismiss();
+                new AlertDialog.Builder(getContext()).setMessage("Please check your internet connection and try again!")
+                        .setTitle("Network Error")
+                        .setCancelable(false)
+                        .setNeutralButton(android.R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        android.os.Process.killProcess(android.os.Process.myPid());
+                                    }
+                                })
+                        .show();
             }
         });
         return rootView;

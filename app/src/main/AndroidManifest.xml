@@ -46,7 +46,7 @@
             android:name=".SignupActivity"
             android:theme="@style/AppTheme.Dark" />
         <activity android:name=".CollectingcoinActivity" />
-        <activity android:name=".Sensors.internetActivity"></activity>
+        <activity android:name=".internetActivity"></activity>
 
 
     </application>
