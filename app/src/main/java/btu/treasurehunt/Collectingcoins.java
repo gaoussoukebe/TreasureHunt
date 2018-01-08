@@ -62,6 +62,7 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     List<String> sNames;
     List<Sensor> sList;
     private ProgressBar progressBar;
+    ProgressDialog progressDialog1;
     private int progressStatus = 0;
     private Handler handler = new Handler();
     SessionManager session;
@@ -82,6 +83,9 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final ProgressDialog progressDialog = new ProgressDialog(Collectingcoins.this.getActivity(),
+                R.style.AppTheme_Dark_Dialog);
+
+        progressDialog1=new ProgressDialog(Collectingcoins.this.getActivity(),
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.show();
@@ -272,7 +276,9 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
 
                                                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
 
-                                            } else {
+                                            }
+                                            progressDialog1.setIndeterminate(true);
+                                            progressDialog1.show();
                                                 Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
                                                 if (location != null){
@@ -300,9 +306,7 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
                                                         }
                                                     });
                                                     //  ((EditText)findViewById(R.id.etLocationLong)).setText("Longitude: " + longi);
-                                                } else {
 
-                                                }
                                             }
 
 
@@ -358,6 +362,7 @@ public class Collectingcoins extends  Fragment implements SensorEventListener {
                 @Override
                 public void onResponse(Call<sensorBatch> _, Response<sensorBatch> response) {
 
+                    progressDialog1.dismiss();
                     Toast.makeText(getContext(),"You received "+response.body().coins, Toast.LENGTH_LONG ).show();
                 }
 
