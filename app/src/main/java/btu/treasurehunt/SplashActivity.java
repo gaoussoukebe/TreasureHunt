@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
     static final int REQUEST_LOCATION = 1;
     LocationManager locationManager;
     private LocationRequest mLocationRequest;
@@ -46,10 +46,48 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        checkConnection();
+
+
+
+
+
         startLocationUpdates();
         // Start home activity
 
 
+    }
+
+
+    private void checkConnection() {
+        boolean isConnected = ConnectivityReceiver.isConnected();
+        showSnack(isConnected);
+
+    }
+
+    private void showSnack(boolean isConnected) {
+
+        if (isConnected) {
+            Toast.makeText(getBaseContext() , "you are connected" , Toast.LENGTH_LONG).show();
+
+        } else {
+            Toast.makeText(getBaseContext() , "you are not" , Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // register connection status listener
+        MyApplication.getInstance().setConnectivityListener(this);
+    }
+
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        showSnack(isConnected);
     }
 
     protected void startLocationUpdates() {
