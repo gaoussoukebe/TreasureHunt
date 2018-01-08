@@ -34,9 +34,8 @@ public class SplashActivity extends AppCompatActivity {
 
 
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        //getLocation();
+        getLocation();
         // Start home activity
-        startActivity(new Intent(SplashActivity.this, MainActivity.class));
 
 
     }
