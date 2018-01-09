@@ -43,4 +43,5 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.splunk:mint-android-sdk:5.2.2'
     testCompile 'junit:junit:4.12'
+
 }

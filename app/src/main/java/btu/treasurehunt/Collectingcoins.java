@@ -2,6 +2,7 @@ package btu.treasurehunt;
 
 
 import android.Manifest;
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AlertDialogLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -87,14 +89,45 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
     SensorManager sManager;
     Location currentlocation;
     int Count = 0;
-    float valueLight, valueThermometer, valueStepCounter, valueProximity, valueBarometer,
+    float valueLight , valueThermometer, valueStepCounter, valueProximity, valueBarometer,
             valueXaccelerometer, valueYaccelerometer, valueZaccelerometer,
             valueXmagnetometer, valueYMagnetometer, valueZmagnetometer,
             valueXgyroscope, valueYgyroscope, valueZgyroscope,
             valueXgravity, valueYgravity, valueZgravity,
             valueXrotation, valueYrotation, valueZrotation;
-
+    float avgvalueLight=0 , avgvalueThermometer=0, avgvalueStepCounter=0, avgvalueProximity=0, avgvalueBarometer=0,
+            avgvalueXaccelerometer=0, avgvalueYaccelerometer=0, avgvalueZaccelerometer=0,
+            avgvalueXmagnetometer=0, avgvalueYMagnetometer=0, avgvalueZmagnetometer=0,
+            avgvalueXgyroscope=0, avgvalueYgyroscope=0, avgvalueZgyroscope=0,
+            avgvalueXgravity=0, avgvalueYgravity=0, avgvalueZgravity=0,
+            avgvalueXrotation=0, avgvalueYrotation=0, avgvalueZrotation=0;
     Sensor mlight, mTemperature, mPedometer, mAccelerometer, mMagnetometer, mGyroscope, mProximity, mGravity, mRotation, mBarometer;
+
+    int interval= 5000; // read sensor data each 5000 ms
+    boolean flag = false;
+    boolean isHandlerLive = false;
+
+ /*   private final Runnable processSensors = new Runnable() {
+        @Override
+        public void run() {
+
+
+                  // Do work with the sensor values.
+                  avgvalueXaccelerometer+=valueXaccelerometer;
+                  Toast.makeText(getContext(), "value of Thermometer is : " + avgvalueXaccelerometer+ "  " +Count , Toast.LENGTH_SHORT).show();
+                  Count++;
+                  flag = true;
+                  // The Runnable is posted to run again here:
+                  handler.postDelayed(this, interval);
+
+
+
+
+
+
+        }
+    };*/
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -109,6 +142,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
         progressDialog.show();
         View rootView = inflater.inflate(R.layout.collecting_coins, container, false);
         list = (ListView) rootView.findViewById(R.id.list);
+        handler = new Handler();
         sManager = (SensorManager) this.getActivity().getSystemService(getActivity().SENSOR_SERVICE);
         sList = sManager.getSensorList(Sensor.TYPE_ALL);
         send = (Button) rootView.findViewById(R.id.sendInfo);
@@ -201,54 +235,64 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
         valueStepCounter=event.values[0];
 */
 
-        int sensorType = event.sensor.getType();
 
 
-        if (sensorType == Sensor.TYPE_LIGHT) {
-            valueLight = event.values[0];
+            int sensorType = event.sensor.getType();
+
+
+            if (sensorType == Sensor.TYPE_LIGHT) {
+                valueLight = event.values[0];
+            }
+
+            if (sensorType == Sensor.TYPE_STEP_COUNTER) {
+                valueStepCounter = event.values[0];
+            }
+            if (sensorType == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+                valueThermometer = event.values[0];
+            }
+            if (sensorType == Sensor.TYPE_ACCELEROMETER) {
+                valueXaccelerometer = event.values[0];
+                valueYaccelerometer = event.values[1];
+                valueZaccelerometer = event.values[2];
+            }
+            if (sensorType == Sensor.TYPE_MAGNETIC_FIELD) {
+                valueXmagnetometer = event.values[0];
+                valueYMagnetometer = event.values[1];
+                valueZmagnetometer = event.values[2];
+            }
+            if (sensorType == Sensor.TYPE_GYROSCOPE) {
+                valueXgyroscope = event.values[0];
+                valueYgyroscope = event.values[1];
+                valueZgyroscope = event.values[2];
+            }
+            if (sensorType == Sensor.TYPE_PROXIMITY) {
+                valueProximity = event.values[0];
+            }
+            if (sensorType == Sensor.TYPE_GRAVITY) {
+                valueXgravity = event.values[0];
+                valueYgravity = event.values[1];
+                valueZgravity = event.values[2];
+            }
+
+            if (sensorType == Sensor.TYPE_ROTATION_VECTOR) {
+                valueXrotation = event.values[0];
+                valueYrotation = event.values[1];
+                valueZgravity = event.values[2];
+            }
+
+            if (sensorType == Sensor.TYPE_PRESSURE) {
+                valueBarometer = event.values[0];
+            }
+
+
+
+
+
         }
 
-        if (sensorType == Sensor.TYPE_STEP_COUNTER) {
-            valueStepCounter = event.values[0];
-        }
-        if (sensorType == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-            valueThermometer = event.values[0];
-        }
-        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
-            valueXaccelerometer = event.values[0];
-            valueYaccelerometer = event.values[1];
-            valueZaccelerometer = event.values[2];
-        }
-        if (sensorType == Sensor.TYPE_MAGNETIC_FIELD) {
-            valueXmagnetometer = event.values[0];
-            valueYMagnetometer = event.values[1];
-            valueZmagnetometer = event.values[2];
-        }
-        if (sensorType == Sensor.TYPE_GYROSCOPE) {
-            valueXgyroscope = event.values[0];
-            valueYgyroscope = event.values[1];
-            valueZgyroscope = event.values[2];
-        }
-        if (sensorType == Sensor.TYPE_PROXIMITY) {
-            valueProximity = event.values[0];
-        }
-        if (sensorType == Sensor.TYPE_GRAVITY) {
-            valueXgravity = event.values[0];
-            valueYgravity = event.values[1];
-            valueZgravity = event.values[2];
-        }
 
-        if (sensorType == Sensor.TYPE_ROTATION_VECTOR) {
-            valueXrotation = event.values[0];
-            valueYrotation = event.values[1];
-            valueZgravity = event.values[2];
-        }
 
-        if (sensorType == Sensor.TYPE_PRESSURE) {
-            valueBarometer = event.values[0];
-        }
 
-    }
 
     @Override
     public void onResume() {
@@ -264,11 +308,16 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
         sManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_NORMAL);
         sManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
         sManager.registerListener(this, mBarometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+
+
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
         sManager.unregisterListener(this);
     }
 
@@ -280,6 +329,62 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
                                     public void onClick(View v) {
                                         if (checked.size() != 0) {
+
+
+                                            for (int i = 0 ; i<5 ; i++)
+                                            {
+
+                                                avgvalueLight+=valueLight;
+                                                avgvalueThermometer+= valueThermometer;
+                                                avgvalueStepCounter+=valueStepCounter;
+                                                avgvalueProximity+= valueProximity ;
+                                                avgvalueBarometer+= valueBarometer;
+                                                avgvalueXaccelerometer+=valueXaccelerometer;
+                                                avgvalueYaccelerometer+= valueYaccelerometer;
+                                                avgvalueZaccelerometer+= valueZaccelerometer;
+                                                avgvalueXmagnetometer+= valueXmagnetometer;
+                                                avgvalueYMagnetometer+=valueYMagnetometer;
+                                                avgvalueZmagnetometer+= valueZmagnetometer;
+                                                avgvalueXgyroscope+= valueXgyroscope;
+                                                avgvalueYgyroscope+=valueYgyroscope;
+                                                avgvalueZgyroscope+=valueZgyroscope;
+                                                avgvalueXgravity+= valueXgravity;
+                                                avgvalueYgravity+=valueYgravity;
+                                                avgvalueZgravity+=valueZgravity;
+                                                avgvalueXrotation+=valueXrotation;
+                                                avgvalueYrotation+= valueYrotation;
+                                                avgvalueZrotation+= valueZrotation;
+
+                                                new android.os.Handler().postDelayed(
+                                                        new Runnable() {
+                                                            public void run() {
+                                                               // android.os.Process.killProcess(android.os.Process.myPid());
+                                                            }
+                                                        }, 3000);
+                                            }
+
+
+                                            avgvalueStepCounter/=5;
+                                            avgvalueProximity/=5 ;
+                                            avgvalueBarometer/=5;
+                                            avgvalueXaccelerometer/=5;
+                                            avgvalueYaccelerometer/=5;
+                                            avgvalueZaccelerometer/=5;
+                                            avgvalueXmagnetometer/=5;
+                                            avgvalueYMagnetometer/=5;
+                                            avgvalueZmagnetometer/=5;
+                                            avgvalueXgyroscope/=5;
+                                            avgvalueYgyroscope/=5;
+                                            avgvalueZgyroscope/=5;
+                                            avgvalueXgravity/=5;
+                                            avgvalueYgravity/=5;
+                                            avgvalueZgravity/=5;
+                                            avgvalueXrotation/=5;
+                                            avgvalueYrotation/=5;
+                                            avgvalueZrotation/=5;
+                                            avgvalueThermometer/=5;
+                                                    avgvalueLight/=5;
+
 
                                             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                                                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -372,7 +477,19 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
                 public void onResponse(Call<sensorBatch> _, Response<sensorBatch> response) {
 
                     progressDialog1.dismiss();
-                    Toast.makeText(getContext(), "You received " + response.body().coins, Toast.LENGTH_LONG).show();
+
+                    new AlertDialog.Builder(getContext(), R.style.MyDialogTheme).setTitle("You earned "+ response.body().coins + " coins")
+                            .setCancelable(false)
+                            .setNeutralButton(android.R.string.ok,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                             dialog.dismiss();
+                                        }
+                                    })
+
+                            .show();
+
+
                 }
 
                 @Override
@@ -396,7 +513,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
         for (int i = 0; i < checked.size(); i++) {
             if (checked.get(i) == "Accelerometer") {
-                value = "x: " + valueXaccelerometer + ", y: " + valueYaccelerometer + ", z: " + valueZaccelerometer;
+                value = "x: " + avgvalueXaccelerometer + ", y: " + avgvalueYaccelerometer + ", z: " + avgvalueZaccelerometer;
                 Accelerometer accelerometer = new Accelerometer(value, batch, single);
                 final Accelerometerservice Aservice = retrofit.create(Accelerometerservice.class);
                 Call<Accelerometer> createCall = Aservice.create(accelerometer);
@@ -417,10 +534,8 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
             }
 
             if (checked.get(i) == "Magnetometer") {
-                float valuex = valueXmagnetometer;
-                float valuey = valueYMagnetometer;
-                float valuez = valueZmagnetometer;
-                value = "x: " + valueXmagnetometer + ", y: " + valueYMagnetometer + ", z: " + valueZmagnetometer;
+
+                value = "x: " + avgvalueXmagnetometer + ", y: " + avgvalueYMagnetometer + ", z: " + avgvalueZmagnetometer;
                 Magnetometer magnetometer = new Magnetometer(value, batch, environment);
                 final Magnetometerservice Mservice = retrofit.create(Magnetometerservice.class);
                 Call<Magnetometer> createCall = Mservice.create(magnetometer);
@@ -441,7 +556,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
             }
             if (checked.get(i) == "Gyroscope") {
-                value = "x: " + valueXgyroscope + ", y: " + valueYgyroscope + ", z: " + valueZgyroscope;
+                value = "x: " + avgvalueXgyroscope + ", y: " + avgvalueYgyroscope + ", z: " + avgvalueZgyroscope;
                 Gyroscope gyroscope = new Gyroscope(value, batch, single);
                 final Gyroscopeservice Aservice = retrofit.create(Gyroscopeservice.class);
                 Call<Gyroscope> createCall = Aservice.create(gyroscope);
@@ -462,7 +577,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
             }
 
             if (checked.get(i) == "Proximity Sensor") {
-                value = String.valueOf(valueProximity);
+                value = String.valueOf(avgvalueProximity);
                 Proximity proximity = new Proximity(value, batch, single);
                 final Proximityservice Aservice = retrofit.create(Proximityservice.class);
                 Call<Proximity> createCall = Aservice.create(proximity);
@@ -483,7 +598,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
             }
             if (checked.get(i) == "Light Sensor") {
-                value = String.valueOf(valueLight);
+                value = String.valueOf(avgvalueLight);
                 Light light = new Light(value, batch, environment);
                 final Lightservice Aservice = retrofit.create(Lightservice.class);
                 Call<Light> createCall = Aservice.create(light);
@@ -504,7 +619,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
             }
 
             if (checked.get(i) == "Gravity Sensor") {
-                value = "x: " + valueXgravity + ", y: " + valueYgravity + ", z: " + valueZgravity;
+                value = "x: " + avgvalueXgravity + ", y: " + avgvalueYgravity + ", z: " + avgvalueZgravity;
                 Gravity gravity = new Gravity(value, batch, single);
                 final Gravityservice Aservice = retrofit.create(Gravityservice.class);
                 Call<Gravity> createCall = Aservice.create(gravity);
@@ -525,7 +640,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
             }
 
             if (checked.get(i) == "Rotation Sensor") {
-                value = "x: " + valueXrotation + ", y: " + valueYrotation + ", z: " + valueZrotation;
+                value = "x: " + avgvalueXrotation + ", y: " + avgvalueYrotation + ", z: " + avgvalueZrotation;
                 Rotation rotation = new Rotation(value, batch, single);
                 final Rotationservice Aservice = retrofit.create(Rotationservice.class);
                 Call<Rotation> createCall = Aservice.create(rotation);
@@ -545,7 +660,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
                 });
             }
             if (checked.get(i) == "Pedometer") {
-                value = String.valueOf(valueStepCounter);
+                value = String.valueOf(avgvalueStepCounter);
                 Pedometer pedometer = new Pedometer(value, batch, single);
                 final Pedometerservice Aservice = retrofit.create(Pedometerservice.class);
                 Call<Pedometer> createCall = Aservice.create(pedometer);
@@ -566,7 +681,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
             }
             if (checked.get(i) == "Barometer") {
-                value = String.valueOf(valueBarometer);
+                value = String.valueOf(avgvalueBarometer);
                 Barometer barometer = new Barometer(value, batch, environment);
                 final Barometerservice Aservice = retrofit.create(Barometerservice.class);
                 Call<Barometer> createCall = Aservice.create(barometer);
@@ -587,7 +702,7 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
             }
 
             if (checked.get(i) == "Thermometer") {
-                value = String.valueOf(valueThermometer);
+                value = String.valueOf(avgvalueThermometer);
                 Thermometer thermometer = new Thermometer(value, batch, environment);
                 final Thermometerservice Aservice = retrofit.create(Thermometerservice.class);
                 Call<Thermometer> createCall = Aservice.create(thermometer);

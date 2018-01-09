@@ -136,6 +136,8 @@ public class SplashActivity extends AppCompatActivity implements ConnectivityRec
         } else {
             //ınternet
             if(i==0)
+
+
                 displayAlert(this);
             else{
                 Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
@@ -152,6 +154,7 @@ public class SplashActivity extends AppCompatActivity implements ConnectivityRec
 
     public void displayAlert(Context c)
     {
+
             new AlertDialog.Builder(c).setMessage("Please check your internet connection and try again!")
                     .setTitle("Network Error")
                     .setCancelable(false)
