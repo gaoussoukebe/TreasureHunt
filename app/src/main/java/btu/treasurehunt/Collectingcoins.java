@@ -137,8 +137,9 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
         progressDialog1 = new ProgressDialog(Collectingcoins.this.getActivity(),
                 R.style.AppTheme_Dark_Dialog);
-        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCanceledOnTouchOutside(false);progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Retrieving account data...");
         progressDialog.show();
         View rootView = inflater.inflate(R.layout.collecting_coins, container, false);
         list = (ListView) rootView.findViewById(R.id.list);
@@ -394,7 +395,8 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
 
                                             }
                                             progressDialog1.setIndeterminate(true);
-                                            progressDialog1.setCanceledOnTouchOutside(false);
+                                            progressDialog1.setMessage("Sending sensors data...");
+                                            progressDialog1.setCanceledOnTouchOutside(false);progressDialog1.setCancelable(false);
                                             progressDialog1.show();
                                             Location location = ((MyApplication) getActivity().getApplication()).getCurrentLocation();
                                             if (location != null) {
@@ -477,19 +479,28 @@ public class Collectingcoins extends Fragment implements SensorEventListener {
                 public void onResponse(Call<sensorBatch> _, Response<sensorBatch> response) {
 
                     progressDialog1.dismiss();
+                    if(response.body().coins==0) {
+                        new AlertDialog.Builder(getContext(), R.style.MyDialogTheme).setTitle("Sorry!").setMessage("You couldn't earn any coins. Try later or move to a different location in the campus!")
+                                .setCancelable(false)
+                                .setNeutralButton(android.R.string.ok,
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
+                                            }
+                                        })
 
-                    new AlertDialog.Builder(getContext(), R.style.MyDialogTheme).setTitle("You earned "+ response.body().coins + " coins")
+                                .show();
+                    }else{
+                    new AlertDialog.Builder(getContext(), R.style.MyDialogTheme).setTitle("You earned " + response.body().coins + " coins")
                             .setCancelable(false)
                             .setNeutralButton(android.R.string.ok,
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int whichButton) {
-                                             dialog.dismiss();
+                                            dialog.dismiss();
                                         }
                                     })
 
-                            .show();
-
-
+                            .show();}
                 }
 
                 @Override

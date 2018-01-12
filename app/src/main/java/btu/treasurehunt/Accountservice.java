@@ -17,9 +17,4 @@ public interface Accountservice {
 
     @POST("accounts/new")
     Call<Account> create(@Body Account account);
-
-
-
-
-
 }

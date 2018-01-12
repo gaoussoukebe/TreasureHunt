@@ -41,12 +41,10 @@
             android:theme="@style/AppTheme.Dark"></activity>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".SignupActivity"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".CollectingcoinActivity" />
-        <activity android:name=".internetActivity"></activity>
 
 
     </application>

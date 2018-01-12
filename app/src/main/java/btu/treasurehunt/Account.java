@@ -21,6 +21,8 @@ public class Account {
     String name;
     @SerializedName("coins")
     int coins;
+    @SerializedName("points")
+    double points;
     @SerializedName("language")
     String language;
     @SerializedName("cells")

@@ -1,6 +1,9 @@
 package btu.treasurehunt;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -70,6 +73,17 @@ public class MapsActivity extends SupportMapFragment implements OnMapReadyCallba
             }
         return (intersectCount % 2) == 1;
     }
+    private int getcolor(int layer) {
+        float[] hsv = new float[3];
+        int color = 0xF4A460;
+        Color.colorToHSV(color, hsv);
+        for(int i=0;i<layer;i++) {
+            hsv[2] *= 0.8; // value component
+        }
+        color = Color.HSVToColor(hsv);
+        color+=0x7f000000;
+        return color;
+    }
 
     private boolean rayCastIntersect(LatLng tap, LatLng vertA, LatLng vertB) {
 
@@ -122,6 +136,8 @@ public class MapsActivity extends SupportMapFragment implements OnMapReadyCallba
                 @Override
                 public void onResponse(Call<List<UsermapCells>> call, Response<List<UsermapCells>> cells) {
                     mycells = cells.body();
+                    if(mycells!=null&&!mycells.isEmpty())
+                    ((MainActivity)getActivity()).setCoins(mycells.get(0).account.coins);
                     mMap = googleMap;
                     mMap.setMaxZoomPreference(19);
                     mMap.setMinZoomPreference(17);
@@ -186,6 +202,7 @@ public class MapsActivity extends SupportMapFragment implements OnMapReadyCallba
                             if (count == 4) {
                                 Polygon polygon = mMap.addPolygon(rectOptions);
                                 polygon.setClickable(true);
+                                z++;
                                 if(mycells!= null)
                                 {
 
@@ -203,10 +220,9 @@ public class MapsActivity extends SupportMapFragment implements OnMapReadyCallba
                                     polygon.setTag(new Tag(0, z, 1));
                                 }
 
-                                rectOptions.fillColor(((Tag) polygon.getTag()).currentlayer == ((Tag) polygon.getTag()).numlayers ? 0x7f7C542E : ((Tag) polygon.getTag()).currentlayer < 5 ? 0x7fF4A460 : ((Tag) polygon.getTag()).currentlayer < 10 ? 0x7fDC9456 : ((Tag) polygon.getTag()).currentlayer < 15 ? 0x7fC4844C : 0x7fAC7442);}
+                                polygon.setFillColor(((Tag) polygon.getTag()).currentlayer == ((Tag) polygon.getTag()).numlayers ? 0x7fbbbbbb : getcolor(((Tag) polygon.getTag()).currentlayer));}
                             }
                             y = y + 0.000220;
-                            z++;
                         }
                         x = x + 0.000160;
                     }
@@ -222,7 +238,7 @@ public class MapsActivity extends SupportMapFragment implements OnMapReadyCallba
                             polygon.setStrokeWidth(10);
                             previouspolygon = polygon;
                             myBottomSheet.show(getFragmentManager(), myBottomSheet.getTag());
-                        }
+                                               }
                     });
                 }
 

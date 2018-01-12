@@ -17,6 +17,10 @@ public interface SpecialObjectsservice {
 
     @POST("SpecialObjects/new")
     Call<SpecialObjects> create(@Body SpecialObjects specialObjects);
+    @GET("SpecialObjects/check/{id}")
+    Call<SpecialObjects> check(@Path("id") long id);
+    @GET("SpecialObjects/checkall")
+    Call<SpecialObjects> checkall();
 
 
 

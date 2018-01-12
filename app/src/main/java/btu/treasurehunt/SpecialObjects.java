@@ -24,9 +24,10 @@ public class SpecialObjects {
 
     @SerializedName("layer")
     int layer;
-
-    private Cells cells;
-
+    @SerializedName("cells")
+    Cells cells;
+    @SerializedName("account")
+    Account account;
 
 
     public SpecialObjects(int layer, String name , String text ) {

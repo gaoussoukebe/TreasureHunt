@@ -1,9 +1,11 @@
 package btu.treasurehunt;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.app.Fragment;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new SessionManager(getApplicationContext());
+        ((MyApplication) this.getApplication()).setMainActivity(this);
         session.checkLogin();
         setContentView(R.layout.activity_main);
         // Create the adapter that will return a fragment for each of the three
@@ -102,6 +105,49 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public void setCoins(int coins){
+        fabtext.setText(Integer.toString(coins));
+    }
+    public void displayAlert()
+    {
+
+        new AlertDialog.Builder(this).setMessage("Please check your internet connection and try again!")
+                .setTitle("Network Error")
+                .setCancelable(false)
+                .setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                android.os.Process.killProcess(android.os.Process.myPid());
+                            }
+                        })
+                .show();
+    }
+    public void displayAlert2() {
+        new AlertDialog.Builder(this).setMessage("Someone found the treasure!")
+                .setTitle("Game Over!")
+                .setCancelable(false)
+                .setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                android.os.Process.killProcess(android.os.Process.myPid());
+                            }
+                        })
+                .show();
+    }
+    public void displayAlert3() {
+    new AlertDialog.Builder(getBaseContext()).setMessage("You can not play the game outside of the campus!")
+                                            .setTitle("Location Error")
+                                            .setCancelable(false)
+                                            .setNeutralButton(android.R.string.ok,
+                                                    new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int whichButton) {
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+    })
+            .show();}
+    public long getCoins(){
+        return  Long.parseLong(fabtext.getText().toString());
     }
 
 

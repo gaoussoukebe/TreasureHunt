@@ -31,6 +31,7 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MyApplication) this.getApplication()).setMainActivity(this);
         setContentView(R.layout.activity_signup);
         ButterKnife.bind(this);
 
@@ -69,7 +70,7 @@ public class SignupActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCanceledOnTouchOutside(false);progressDialog.setCancelable(false);
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
